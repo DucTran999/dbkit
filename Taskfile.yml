@@ -24,3 +24,8 @@ tasks:
     desc: run golangci-lint
     cmds:
       - golangci-lint run --timeout 5m --config .golangci.yml
+
+  testenv:
+    desc: setup test db
+    cmds:
+      - ./scripts/testenv.sh
