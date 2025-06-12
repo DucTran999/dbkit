@@ -19,7 +19,7 @@ func (p PgSSLConfig) String() string {
 	case PgSSLVerifyFull:
 		return "verify-full"
 	default:
-		return "unknown"
+		return ""
 	}
 }
 
@@ -40,7 +40,7 @@ func (pc *PostgreSQLConfig) Validate() error {
 		return err
 	}
 
-	if strings.TrimSpace(pc.SSLMode.String()) == "unknown" {
+	if strings.TrimSpace(pc.SSLMode.String()) == "" {
 		return ErrPostgresqlSSLMode
 	}
 
