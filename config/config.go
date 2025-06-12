@@ -14,25 +14,23 @@ var (
 	ErrMissingDatabase = errors.New("database name is required")
 )
 
-type Config interface {
-	Validate() error
-}
-
 // Config represents the complete database configuration
-type config struct {
-	Host string `json:"host" yaml:"host"`
-	Port int    `json:"port" yaml:"port"`
+type Config struct {
+	// Address
+	Host string
+	Port int
 
-	Username string `json:"username" yaml:"username"`
-	Password string `json:"password" yaml:"password"`
-	Database string `json:"database" yaml:"database"`
+	// Authentication information
+	Username string
+	Password string
+	Database string
 
 	// Connection options
-	Timezone string `json:"timezone" yaml:"timezone"`
+	Timezone string
 }
 
 // Validate validates the configuration
-func (c *config) Validate() error {
+func (c *Config) Validate() error {
 	var errs []error
 
 	// Validate required fields

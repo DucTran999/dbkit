@@ -3,11 +3,10 @@
 package dbkit
 
 import (
-	"context"
 	"fmt"
 
 	"github.com/DucTran999/dbkit/config"
-	"github.com/DucTran999/dbkit/drivers"
+	"github.com/DucTran999/dbkit/dialects"
 	"gorm.io/gorm"
 )
 
@@ -15,38 +14,31 @@ import (
 type Connection interface {
 	// Core database operations
 	DB() *gorm.DB
-	Close(ctx context.Context) error
+	Close() error
+	Ping() error
 }
 
 // connection implements the Connection interface
 type connection struct {
-	db     *gorm.DB
-	config config.Config
-	driver drivers.DriverInterface
+	db *gorm.DB
 }
 
-// NewConnection creates a new database connection based on the provided configuration
-func NewConnection(driver drivers.Driver, cfg config.Config) (Connection, error) {
+// NewPostgreSQLConnection creates a new PostgreSQL database connection
+func NewPostgreSQLConnection(cfg config.PostgreSQLConfig) (Connection, error) {
 	if err := cfg.Validate(); err != nil {
-		return nil, fmt.Errorf("invalid configuration: %w", err)
+		return nil, err
 	}
 
-	// Create driver instance
-	driverInst, err := drivers.NewDriver(driver)
+	driver := dialects.NewPostgreSQLDialect()
+	db, err := driver.Open(cfg)
 	if err != nil {
-		return nil, fmt.Errorf("failed to create driver: %w", err)
+		return nil, fmt.Errorf("failed to open PostgreSQL connection: %w", err)
 	}
 
-	// Open database connection
-	db, err := driverInst.Open(cfg)
-	if err != nil {
-		return nil, fmt.Errorf("failed to open database connection: %w", err)
-	}
+	conn := &connection{db: db}
 
-	conn := &connection{
-		db:     db,
-		config: cfg,
-		driver: driverInst,
+	if err = conn.Ping(); err != nil {
+		return nil, err
 	}
 
 	return conn, nil
@@ -57,8 +49,26 @@ func (c *connection) DB() *gorm.DB {
 	return c.db
 }
 
+// Ping tests the database connection
+func (c *connection) Ping() error {
+	if c.db == nil {
+		return fmt.Errorf("database connection is nil")
+	}
+
+	sqlDB, err := c.db.DB()
+	if err != nil {
+		return fmt.Errorf("failed to get sql.DB: %w", err)
+	}
+
+	if err := sqlDB.Ping(); err != nil {
+		return fmt.Errorf("failed to ping database: %w", err)
+	}
+
+	return nil
+}
+
 // Close closes the database connection
-func (c *connection) Close(ctx context.Context) error {
+func (c *connection) Close() error {
 	if c.db == nil {
 		return nil
 	}
