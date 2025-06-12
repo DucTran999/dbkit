@@ -1,0 +1,73 @@
+package dialects_test
+
+import (
+	"testing"
+
+	"github.com/DucTran999/dbkit/config"
+	"github.com/DucTran999/dbkit/dialects"
+	"github.com/stretchr/testify/require"
+)
+
+func TestPostgreSQLDialect(t *testing.T) {
+	tests := []struct {
+		name        string
+		config      config.PostgreSQLConfig
+		expectedErr string
+	}{
+		{
+			name: "invalid port",
+			config: config.PostgreSQLConfig{
+				Config: config.Config{
+					Port:     100000,
+					Username: "test",
+					Password: "test",
+					Database: "dbkit_test",
+					Timezone: "Asia/Ho_Chi_Minh",
+				},
+				SSLMode: config.PgSSLDisable,
+			},
+			expectedErr: config.ErrMissingHost.Error(),
+		},
+		{
+			name: "wrong connect information",
+			config: config.PostgreSQLConfig{
+				Config: config.Config{
+					Port:     4953,
+					Host:     "localhost",
+					Username: "test",
+					Password: "test",
+					Database: "dbkit_test",
+					Timezone: "Asia/Ho_Chi_Minh",
+				},
+				SSLMode: config.PgSSLDisable,
+			},
+			expectedErr: "connection refused",
+		},
+		{
+			name: "valid config default disable ssl",
+			config: config.PostgreSQLConfig{
+				Config: config.Config{
+					Host:     "localhost",
+					Port:     5432,
+					Username: "test",
+					Password: "test",
+					Database: "dbkit_test",
+					Timezone: "Asia/Ho_Chi_Minh",
+				},
+				SSLMode: config.PgSSLDisable,
+			},
+		},
+	}
+
+	for _, tc := range tests {
+		t.Run(tc.name, func(t *testing.T) {
+			_, err := dialects.NewPostgreSQLDialect().Open(tc.config)
+
+			if tc.expectedErr != "" {
+				require.ErrorContains(t, err, tc.expectedErr)
+			} else {
+				require.NoError(t, err)
+			}
+		})
+	}
+}
