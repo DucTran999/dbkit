@@ -3,7 +3,6 @@ package config
 
 import (
 	"errors"
-	"fmt"
 	"strings"
 )
 
@@ -31,27 +30,21 @@ type Config struct {
 
 // Validate validates the configuration
 func (c *Config) Validate() error {
-	var errs []error
-
 	// Validate required fields
 	if strings.TrimSpace(c.Host) == "" {
-		errs = append(errs, ErrMissingHost)
+		return ErrMissingHost
 	}
 
 	if c.Port <= 0 || c.Port > 65535 {
-		errs = append(errs, ErrInvalidPort)
+		return ErrInvalidPort
 	}
 
 	if strings.TrimSpace(c.Username) == "" {
-		errs = append(errs, ErrMissingUsername)
+		return ErrMissingUsername
 	}
 
 	if strings.TrimSpace(c.Database) == "" {
-		errs = append(errs, ErrMissingDatabase)
-	}
-
-	if len(errs) > 0 {
-		return fmt.Errorf("configuration validation failed: %v", errs)
+		return ErrMissingDatabase
 	}
 
 	return nil

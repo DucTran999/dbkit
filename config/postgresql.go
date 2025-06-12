@@ -6,6 +6,10 @@ import (
 	"github.com/pkg/errors"
 )
 
+var (
+	ErrPostgresqlSSLMode = errors.New("invalid ssl mode")
+)
+
 type PgSSLConfig int
 
 func (p PgSSLConfig) String() string {
@@ -36,8 +40,8 @@ func (pc *PostgreSQLConfig) Validate() error {
 		return err
 	}
 
-	if strings.TrimSpace(pc.SSLMode.String()) == "" {
-		return errors.New("sslmode cannot be empty")
+	if strings.TrimSpace(pc.SSLMode.String()) == "unknown" {
+		return ErrPostgresqlSSLMode
 	}
 
 	return nil
