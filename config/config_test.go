@@ -195,7 +195,7 @@ func BenchmarkConfig_Validate(b *testing.B) {
 	}
 
 	b.ResetTimer()
-	for b.Loop() {
+	for range b.N {
 		_ = config.Validate()
 	}
 }
@@ -210,7 +210,7 @@ func BenchmarkConfigValidateWithErrors(b *testing.B) {
 
 	b.ResetTimer()
 
-	for b.Loop() {
+	for range b.N {
 		_ = config.Validate()
 	}
 }

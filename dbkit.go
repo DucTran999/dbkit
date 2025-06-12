@@ -29,19 +29,12 @@ func NewPostgreSQLConnection(cfg config.PostgreSQLConfig) (Connection, error) {
 		return nil, err
 	}
 
-	driver := dialects.NewPostgreSQLDialect()
-	db, err := driver.Open(cfg)
+	db, err := dialects.NewPostgreSQLDialect().Open(cfg)
 	if err != nil {
 		return nil, fmt.Errorf("failed to open PostgreSQL connection: %w", err)
 	}
 
-	conn := &connection{db: db}
-
-	if err = conn.Ping(); err != nil {
-		return nil, err
-	}
-
-	return conn, nil
+	return &connection{db: db}, nil
 }
 
 // DB returns the underlying GORM database instance
@@ -51,10 +44,6 @@ func (c *connection) DB() *gorm.DB {
 
 // Ping tests the database connection
 func (c *connection) Ping() error {
-	if c.db == nil {
-		return fmt.Errorf("database connection is nil")
-	}
-
 	sqlDB, err := c.db.DB()
 	if err != nil {
 		return fmt.Errorf("failed to get sql.DB: %w", err)
@@ -69,10 +58,6 @@ func (c *connection) Ping() error {
 
 // Close closes the database connection
 func (c *connection) Close() error {
-	if c.db == nil {
-		return nil
-	}
-
 	sqlDB, err := c.db.DB()
 	if err != nil {
 		return fmt.Errorf("failed to get sql.DB: %w", err)
