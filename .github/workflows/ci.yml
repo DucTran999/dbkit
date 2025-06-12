@@ -37,6 +37,8 @@ jobs:
         uses: arduino/setup-task@v2
       - name: Tidy Modules
         run: task tidy
+      - name: Setup database for test
+        run: task testenv
       - name: Run Coverage Tests
         run: task coverage
       - name: Upload to Codecov
@@ -45,3 +47,5 @@ jobs:
           files: ./test/coverage/coverage.out
           flags: unittests
           token: ${{ secrets.CODECOV_TOKEN }}
+      - name: cleanup
+        run: docker-compose -f docker/docker-compose.yml down
