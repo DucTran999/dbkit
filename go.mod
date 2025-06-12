@@ -1,8 +1,6 @@
 module github.com/DucTran999/dbkit
 
-go 1.23.0
-
-toolchain go1.23.1
+go 1.23.1
 
 require (
 	github.com/pkg/errors v0.9.1
