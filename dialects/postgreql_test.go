@@ -63,7 +63,7 @@ func TestPostgreSQLDialect(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			_, err := dialects.NewPostgreSQLDialect().Open(tc.config)
 
-			if err != nil {
+			if tc.expectedErr != "" {
 				require.ErrorContains(t, err, tc.expectedErr)
 			} else {
 				require.NoError(t, err)
