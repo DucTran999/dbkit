@@ -20,21 +20,36 @@ type Connection interface {
 
 // connection implements the Connection interface
 type connection struct {
-	db *gorm.DB
+	db  *gorm.DB
+	cfg config.PostgreSQLConfig
 }
 
-// NewPostgreSQLConnection creates a new PostgreSQL database connection
+// NewPostgreSQLConnection initializes and returns a new PostgreSQL database connection.
 func NewPostgreSQLConnection(cfg config.PostgreSQLConfig) (Connection, error) {
+	// Validate the configuration values before proceeding.
 	if err := cfg.Validate(); err != nil {
 		return nil, err
 	}
 
+	// Open a new GORM DB instance using the PostgreSQL dialect and provided config.
 	db, err := dialects.NewPostgreSQLDialect().Open(cfg)
 	if err != nil {
 		return nil, fmt.Errorf("failed to open PostgreSQL connection: %w", err)
 	}
 
-	return &connection{db: db}, nil
+	// Wrap the GORM DB instance and config in a Connection implementation.
+	conn := &connection{
+		db:  db,
+		cfg: cfg,
+	}
+
+	// Initialize the connection pool (e.g., max open/idle connections).
+	if err := conn.initPool(); err != nil {
+		return nil, fmt.Errorf("failed to initialize connection pool: %w", err)
+	}
+
+	// Return the fully initialized connection.
+	return conn, nil
 }
 
 // DB returns the underlying GORM database instance
@@ -66,6 +81,21 @@ func (c *connection) Close() error {
 	if err := sqlDB.Close(); err != nil {
 		return fmt.Errorf("failed to close connection: %w", err)
 	}
+
+	return nil
+}
+
+func (c *connection) initPool() error {
+	sqlDB, err := c.db.DB()
+	if err != nil {
+		return fmt.Errorf("failed to get sql.DB: %w", err)
+	}
+
+	// Apply connection pool settings
+	sqlDB.SetMaxIdleConns(c.cfg.MaxIdleConnection)
+	sqlDB.SetMaxOpenConns(c.cfg.MaxOpenConnection)
+	sqlDB.SetConnMaxLifetime(c.cfg.ConnMaxLifetime)
+	sqlDB.SetConnMaxIdleTime(c.cfg.ConnMaxIdleTime)
 
 	return nil
 }
