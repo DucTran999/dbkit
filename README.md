@@ -12,12 +12,11 @@
 
 ## Features
 
-- ✅ Unified interface for multiple SQL databases  
-- 🔧 Configuration-based setup using [Viper](https://github.com/spf13/viper)  
-- 🔌 Supports PostgreSQL, MySQL, and ClickHouse  
-- 🧪 Easy to extend with custom dialects  
-- 📦 Designed for modular use in microservices or monoliths  
-- 🧹 Clean, testable code with coverage reporting  
+- ✅ Unified interface for multiple SQL databases
+- 🔌 Supports PostgreSQL, MySQL, and ClickHouse
+- 🧪 Easy to extend with custom dialects
+- 📦 Designed for modular use in microservices or monoliths
+- 🧹 Clean, testable code with coverage reporting
 
 ## Installation
 
@@ -25,9 +24,57 @@
 go get github.com/DucTran999/dbkit
 ```
 
-# Contributing
+## Quick start
+
+### Basic Connection
+
+Here's how to establish a connection to different databases:
+
+### PostgreSQL
+
+```go
+package main
+
+import (
+	"log"
+
+	"github.com/DucTran999/dbkit"
+	"github.com/DucTran999/dbkit/config"
+)
+
+func main() {
+	pgConf := config.PostgreSQLConfig{
+        Config: config.Config{
+            Host:     "your_host",
+            Port:     5432,
+            Username: "your_username",
+            Password: "your_password",
+            Database: "your_database",
+            Timezone: "UTC",
+        },
+        SSLMode: config.PgSSLDisable,
+    }
+
+	conn, err := dbkit.NewPostgreSQLConnection(pgConf)
+	if err != nil {
+		log.Fatalf("failed to connect: %v", err)
+	}
+	defer conn.Close()
+
+
+    // Test the connection
+    if err := conn.Ping(); err != nil {
+        log.Fatalf("Failed to ping database: %v", err)
+    }
+
+    log.Println("Successfully connected to PostgreSQL!")
+}
+```
+
+## Contributing
+
 Contributions are welcome! Please open an issue or submit a pull request.
 
-# License
-This project is licensed under the MIT License.
+## License
 
+This project is licensed under the MIT License.
