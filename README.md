@@ -5,4 +5,29 @@
 [![codecov](https://codecov.io/gh/DucTran999/dbkit/graph/badge.svg?token=5XBMMBKCPD)](https://codecov.io/gh/DucTran999/dbkit)
 [![Known Vulnerabilities](https://snyk.io/test/github/ductran999/dbkit/badge.svg)](https://snyk.io/test/github/ductran999/dbkit)
 [![License](https://img.shields.io/github/license/DucTran999/dbkit)](LICENSE)
-![CodeRabbit Pull Request Reviews](https://img.shields.io/coderabbit/prs/github/DucTran999/dbkit?utm_source=oss&utm_medium=github&utm_campaign=DucTran999%2Fcommon-pattern&labelColor=171717&color=FF570A&link=https%3A%2F%2Fcoderabbit.ai&label=CodeRabbit+Reviews)
+
+## Overview
+
+**DBKit** is a lightweight and extensible database abstraction layer for Go. It simplifies working with multiple SQL database dialects (e.g. PostgreSQL, ClickHouse, MySQL) using a unified interface and configuration-driven setup. Built on top of [GORM](https://gorm.io), DBKit is ideal for applications that require flexible, decoupled database initialization and switching.
+
+## Features
+
+- ✅ Unified interface for multiple SQL databases  
+- 🔧 Configuration-based setup using [Viper](https://github.com/spf13/viper)  
+- 🔌 Supports PostgreSQL, MySQL, and ClickHouse  
+- 🧪 Easy to extend with custom dialects  
+- 📦 Designed for modular use in microservices or monoliths  
+- 🧹 Clean, testable code with coverage reporting  
+
+## Installation
+
+```bash
+go get github.com/DucTran999/dbkit
+```
+
+# Contributing
+Contributions are welcome! Please open an issue or submit a pull request.
+
+# License
+This project is licensed under the MIT License.
+
