@@ -32,6 +32,8 @@ const (
 type PostgreSQLConfig struct {
 	Config
 
+	PoolConfig
+
 	SSLMode PgSSLConfig
 }
 
@@ -39,6 +41,8 @@ func (pc *PostgreSQLConfig) Validate() error {
 	if err := pc.Config.Validate(); err != nil {
 		return err
 	}
+
+	pc.PoolConfig.SetDefaults()
 
 	if strings.TrimSpace(pc.SSLMode.String()) == "" {
 		return ErrPostgresqlSSLMode
