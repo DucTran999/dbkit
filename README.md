@@ -50,7 +50,7 @@ func main() {
             Username: "your_username",
             Password: "your_password",
             Database: "your_database",
-            Timezone: "UTC",
+            TimeZone: "UTC",
         },
         SSLMode: config.PgSSLDisable,
     }
@@ -63,7 +63,7 @@ func main() {
 
 
     // Test the connection
-    if err := conn.Ping(); err != nil {
+    if err := conn.Ping(context.Background()); err != nil {
         log.Fatalf("Failed to ping database: %v", err)
     }
 

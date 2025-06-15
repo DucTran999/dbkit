@@ -33,7 +33,7 @@ type Config struct {
 	Database string
 
 	// Connection options
-	Timezone string
+	TimeZone string
 }
 
 // Validate validates the configuration

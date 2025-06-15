@@ -21,6 +21,22 @@ services:
       start_period: 10s
     restart: unless-stopped
 
+  mysql:
+    image: mysql:8.0
+    container_name: dbkit_mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: dbkit_test
+      MYSQL_ROOT_PASSWORD: test
+      MYSQL_USER: test
+      MYSQL_PASSWORD: test
+    ports:
+      - "3306:3306"
+    volumes:
+      - ../.docker/mysql_data:/var/lib/mysql
+    networks:
+      - localnet
+
 networks:
   localnet:
     driver: bridge
