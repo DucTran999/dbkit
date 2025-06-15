@@ -2,33 +2,46 @@ package dialects
 
 import (
 	"fmt"
+	"net/url"
 
 	"github.com/DucTran999/dbkit/config"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
 
-type postgreSQLDialect struct{}
-
-func NewPostgreSQLDialect() *postgreSQLDialect {
-	return &postgreSQLDialect{}
+type postgreSQLDialect struct {
+	cfg config.PostgreSQLConfig
 }
 
-// Open opens a PostgreSQL database connection
-func (d *postgreSQLDialect) Open(cfg config.PostgreSQLConfig) (*gorm.DB, error) {
-	if err := cfg.Validate(); err != nil {
-		return nil, err
-	}
+// NewPostgreSQLDialect returns a new PostgreSQL dialect with config.
+func NewPostgreSQLDialect(cfg config.PostgreSQLConfig) Dialect {
+	return &postgreSQLDialect{cfg: cfg}
+}
 
-	dsn := fmt.Sprintf(
-		"host=%s user=%s password=%s dbname=%s port=%d sslmode=%s TimeZone=%s",
-		cfg.Host, cfg.Username, cfg.Password, cfg.Database, cfg.Port, cfg.SSLMode, cfg.Timezone,
-	)
-
-	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
+// Open opens a PostgreSQL database connection.
+func (d *postgreSQLDialect) Open() (*gorm.DB, error) {
+	db, err := gorm.Open(postgres.Open(d.buildDSN()), &gorm.Config{})
 	if err != nil {
 		return nil, fmt.Errorf("failed to open PostgreSQL connection: %w", err)
 	}
 
+	sqlDB, err := db.DB()
+	if err != nil {
+		return nil, fmt.Errorf("failed to get sql.DB: %w", err)
+	}
+
+	sqlDB.SetMaxIdleConns(d.cfg.MaxIdleConnection)
+	sqlDB.SetMaxOpenConns(d.cfg.MaxOpenConnection)
+	sqlDB.SetConnMaxLifetime(d.cfg.ConnMaxLifetime)
+	sqlDB.SetConnMaxIdleTime(d.cfg.ConnMaxIdleTime)
+
 	return db, nil
+}
+
+func (d *postgreSQLDialect) buildDSN() string {
+	return fmt.Sprintf(
+		"host=%s user=%s password=%s dbname=%s port=%d sslmode=%s TimeZone=%s",
+		d.cfg.Host, d.cfg.Username, url.QueryEscape(d.cfg.Password), d.cfg.Database,
+		d.cfg.Port, d.cfg.SSLMode, d.cfg.TimeZone,
+	)
 }
