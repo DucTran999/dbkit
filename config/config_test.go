@@ -22,7 +22,7 @@ func TestConfigValidate(t *testing.T) {
 				Username: "testuser",
 				Password: "testpass",
 				Database: "testdb",
-				Timezone: "UTC",
+				TimeZone: "UTC",
 			},
 			expectedErr: nil,
 		},

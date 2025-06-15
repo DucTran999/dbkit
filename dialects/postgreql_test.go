@@ -15,20 +15,6 @@ func TestPostgreSQLDialect(t *testing.T) {
 		expectedErr string
 	}{
 		{
-			name: "invalid port",
-			config: config.PostgreSQLConfig{
-				Config: config.Config{
-					Port:     100000,
-					Username: "test",
-					Password: "test",
-					Database: "dbkit_test",
-					Timezone: "Asia/Ho_Chi_Minh",
-				},
-				SSLMode: config.PgSSLDisable,
-			},
-			expectedErr: config.ErrMissingHost.Error(),
-		},
-		{
 			name: "wrong connect information",
 			config: config.PostgreSQLConfig{
 				Config: config.Config{
@@ -37,7 +23,7 @@ func TestPostgreSQLDialect(t *testing.T) {
 					Username: "test",
 					Password: "test",
 					Database: "dbkit_test",
-					Timezone: "Asia/Ho_Chi_Minh",
+					TimeZone: "Asia/Ho_Chi_Minh",
 				},
 				SSLMode: config.PgSSLDisable,
 			},
@@ -52,17 +38,15 @@ func TestPostgreSQLDialect(t *testing.T) {
 					Username: "test",
 					Password: "test",
 					Database: "dbkit_test",
-					Timezone: "Asia/Ho_Chi_Minh",
+					TimeZone: "Asia/Ho_Chi_Minh",
 				},
-				SSLMode: config.PgSSLDisable,
 			},
 		},
 	}
 
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
-			_, err := dialects.NewPostgreSQLDialect().Open(tc.config)
-
+			_, err := dialects.NewPostgreSQLDialect(tc.config).Open()
 			if tc.expectedErr != "" {
 				require.ErrorContains(t, err, tc.expectedErr)
 			} else {

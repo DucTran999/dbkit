@@ -1,6 +1,7 @@
 package dbkit_test
 
 import (
+	"context"
 	"testing"
 
 	"github.com/DucTran999/dbkit"
@@ -16,16 +17,15 @@ func TestPostgreSQLConnection(t *testing.T) {
 			Username: "test",
 			Password: "test",
 			Database: "dbkit_test",
-			Timezone: "Asia/Ho_Chi_Minh",
+			TimeZone: "Asia/Ho_Chi_Minh",
 		},
-		SSLMode: config.PgSSLDisable, // or whatever the correct SSLMode constant is
 	}
 
 	conn, err := dbkit.NewPostgreSQLConnection(pgConf)
 	require.NoError(t, err)
 
 	// Test Ping to DB
-	err = conn.Ping()
+	err = conn.Ping(context.Background())
 	require.NoError(t, err)
 
 	// verify db instance
@@ -35,7 +35,7 @@ func TestPostgreSQLConnection(t *testing.T) {
 	conn.Close()
 
 	// Test Ping to DB
-	err = conn.Ping()
+	err = conn.Ping(context.Background())
 	require.ErrorContains(t, err, "database is closed")
 }
 
@@ -46,7 +46,7 @@ func TestPostgreSQLConnectionFailed(t *testing.T) {
 			Username: "test",
 			Password: "test",
 			Database: "dbkit_test",
-			Timezone: "Asia/Ho_Chi_Minh",
+			TimeZone: "Asia/Ho_Chi_Minh",
 		},
 		SSLMode: config.PgSSLDisable, // or whatever the correct SSLMode constant is
 	}
