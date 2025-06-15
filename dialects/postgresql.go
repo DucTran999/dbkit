@@ -2,7 +2,6 @@ package dialects
 
 import (
 	"fmt"
-	"net/url"
 
 	"github.com/DucTran999/dbkit/config"
 	"gorm.io/driver/postgres"
@@ -41,7 +40,7 @@ func (d *postgreSQLDialect) Open() (*gorm.DB, error) {
 func (d *postgreSQLDialect) buildDSN() string {
 	return fmt.Sprintf(
 		"host=%s user=%s password=%s dbname=%s port=%d sslmode=%s TimeZone=%s",
-		d.cfg.Host, d.cfg.Username, url.QueryEscape(d.cfg.Password), d.cfg.Database,
+		d.cfg.Host, d.cfg.Username, d.cfg.Password, d.cfg.Database,
 		d.cfg.Port, d.cfg.SSLMode, d.cfg.TimeZone,
 	)
 }
