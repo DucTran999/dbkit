@@ -19,8 +19,11 @@ COV_PATH=test/coverage
 
 mkdir -p $COV_PATH
 
+# Generate list of packages excluding ./cmd
+PKGS=$(go list ./... | grep -v '/cmd')
+
 # Run tests with coverage
-if ! go test -cover ./... -coverprofile="$COV_PATH/coverage.out"; then
+if ! go test -cover -coverprofile="$COV_PATH/coverage.out" $PKGS; then
   echo -e "\033[0;31m❌ Tests failed. Cannot generate coverage report.\033[0m"
   exit 1
 fi

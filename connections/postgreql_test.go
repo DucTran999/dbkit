@@ -1,16 +1,16 @@
-package dbkit_test
+package connections_test
 
 import (
 	"context"
 	"testing"
 
-	"github.com/DucTran999/dbkit"
 	"github.com/DucTran999/dbkit/config"
+	"github.com/DucTran999/dbkit/connections"
 	"github.com/stretchr/testify/require"
 )
 
 func TestPostgreSQLConnection(t *testing.T) {
-	pgConf := dbkit.PostgreSQLConfig{
+	pgConf := config.PostgreSQLConfig{
 		Config: config.Config{
 			Host:     "localhost",
 			Port:     5432,
@@ -21,7 +21,7 @@ func TestPostgreSQLConnection(t *testing.T) {
 		},
 	}
 
-	conn, err := dbkit.NewPostgreSQLConnection(pgConf)
+	conn, err := connections.NewPostgreSQLConnection(pgConf)
 	require.NoError(t, err)
 
 	// Test Ping to DB
@@ -52,12 +52,12 @@ func TestPostgreSQLConnectionFailed(t *testing.T) {
 	}
 
 	// test config missing host
-	conn, err := dbkit.NewPostgreSQLConnection(pgConf)
+	conn, err := connections.NewPostgreSQLConnection(pgConf)
 	require.ErrorIs(t, err, config.ErrMissingHost)
 
 	// Test connection failed cause wrong port
 	pgConf.Host = "localhost"
-	conn, err = dbkit.NewPostgreSQLConnection(pgConf)
+	conn, err = connections.NewPostgreSQLConnection(pgConf)
 	require.ErrorContains(t, err, "connection refused")
 	require.Nil(t, conn)
 }

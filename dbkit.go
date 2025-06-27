@@ -4,10 +4,9 @@ package dbkit
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/DucTran999/dbkit/config"
-	"github.com/DucTran999/dbkit/dialects"
+	"github.com/DucTran999/dbkit/connections"
 	"gorm.io/gorm"
 )
 
@@ -19,47 +18,17 @@ type Connection interface {
 	Ping(ctx context.Context) error
 }
 
-// connection implements the Connection interface
-type connection struct {
-	db *gorm.DB
-}
+type Config = config.Config
+type PostgreSQLConfig = config.PostgreSQLConfig
 
-// NewPostgreSQLConnection initializes and returns a new PostgreSQL database connection.
-func NewPostgreSQLConnection(cfg config.PostgreSQLConfig) (Connection, error) {
-	if err := cfg.Validate(); err != nil {
-		return nil, err
-	}
+var (
+	ErrPostgresqlSSLMode = config.ErrPostgresqlSSLMode
+	ErrMissingHost       = config.ErrMissingHost
+	ErrInvalidPort       = config.ErrInvalidPort
+	ErrMissingUsername   = config.ErrMissingUsername
+	ErrMissingDatabase   = config.ErrMissingDatabase
+)
 
-	db, err := dialects.NewPostgreSQLDialect(cfg).Open()
-	if err != nil {
-		return nil, fmt.Errorf("failed to open PostgreSQL connection: %w", err)
-	}
-
-	// Return the fully initialized connection.
-	return &connection{db: db}, nil
-}
-
-// DB returns the underlying GORM database instance
-func (c *connection) DB() *gorm.DB {
-	return c.db
-}
-
-// Ping tests the database connection
-func (c *connection) Ping(ctx context.Context) error {
-	sqlDB, err := c.db.DB()
-	if err != nil {
-		return fmt.Errorf("failed to get sql.DB: %w", err)
-	}
-
-	return sqlDB.PingContext(ctx)
-}
-
-// Close closes the database connection
-func (c *connection) Close() error {
-	sqlDB, err := c.db.DB()
-	if err != nil {
-		return fmt.Errorf("failed to get sql.DB: %w", err)
-	}
-
-	return sqlDB.Close()
+func NewPostgreSQLConnection(cfg PostgreSQLConfig) (Connection, error) {
+	return connections.NewPostgreSQLConnection(cfg)
 }
