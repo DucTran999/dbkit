@@ -2,15 +2,10 @@ package connections
 
 import (
 	"context"
-	"database/sql"
 	"fmt"
 
 	"gorm.io/gorm"
 )
-
-type DBWrapper interface {
-	DB() (*sql.DB, error)
-}
 
 // connection implements the Connection interface
 type connection struct {
