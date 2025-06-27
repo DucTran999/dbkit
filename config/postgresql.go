@@ -1,7 +1,7 @@
 package config
 
 import (
-	"strings"
+	"fmt"
 
 	"github.com/pkg/errors"
 )
@@ -10,23 +10,23 @@ var (
 	ErrPostgresqlSSLMode = errors.New("invalid ssl mode")
 )
 
-type PgSSLConfig int
-
-func (p PgSSLConfig) String() string {
-	switch p {
-	case PgSSLDisable:
-		return "disable"
-	case PgSSLVerifyFull:
-		return "verify-full"
-	default:
-		return ""
-	}
-}
+type PgSSLConfig string
 
 const (
-	PgSSLDisable PgSSLConfig = iota
-	PgSSLVerifyFull
+	PgSSLDisable    PgSSLConfig = "disable"
+	PgSSLVerifyFull PgSSLConfig = "verify-full"
 )
+
+func (p PgSSLConfig) Validate() error {
+	switch p {
+	case PgSSLDisable:
+		return nil
+	case PgSSLVerifyFull:
+		return nil
+	default:
+		return fmt.Errorf("unsupported SSL mode: %s", p)
+	}
+}
 
 // PostgreSQLConfig holds PostgreSQL-specific configuration
 type PostgreSQLConfig struct {
@@ -44,8 +44,8 @@ func (pc *PostgreSQLConfig) Validate() error {
 
 	pc.PoolConfig.SetDefaults()
 
-	if strings.TrimSpace(pc.SSLMode.String()) == "" {
-		return ErrPostgresqlSSLMode
+	if err := pc.SSLMode.Validate(); err != nil {
+		pc.SSLMode = PgSSLDisable
 	}
 
 	return nil

@@ -36,24 +36,24 @@ Here's how to establish a connection to different databases:
 package main
 
 import (
+	"context"
 	"log"
 
 	"github.com/DucTran999/dbkit"
-	"github.com/DucTran999/dbkit/config"
 )
 
 func main() {
-	pgConf := config.PostgreSQLConfig{
-        Config: config.Config{
-            Host:     "your_host",
-            Port:     5432,
-            Username: "your_username",
-            Password: "your_password",
-            Database: "your_database",
-            TimeZone: "UTC",
-        },
-        SSLMode: config.PgSSLDisable,
-    }
+	pgConf := dbkit.PostgreSQLConfig{
+		Config: dbkit.Config{
+			Host:     "localhost",
+			Port:     5432,
+			Username: "test",
+			Password: "test",
+			Database: "dbkit_test",
+			TimeZone: "UTC",
+		},
+		SSLMode: "disable",
+	}
 
 	conn, err := dbkit.NewPostgreSQLConnection(pgConf)
 	if err != nil {
@@ -61,13 +61,12 @@ func main() {
 	}
 	defer conn.Close()
 
+	// Test the connection
+	if err := conn.Ping(context.Background()); err != nil {
+		log.Fatalf("Failed to ping database: %v", err)
+	}
 
-    // Test the connection
-    if err := conn.Ping(context.Background()); err != nil {
-        log.Fatalf("Failed to ping database: %v", err)
-    }
-
-    log.Println("Successfully connected to PostgreSQL!")
+	log.Println("Successfully connected to PostgreSQL!")
 }
 ```
 
