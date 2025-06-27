@@ -11,7 +11,7 @@ import (
 
 func TestPostgreSQLConnection(t *testing.T) {
 	pgConf := dbkit.PostgreSQLConfig{
-		Config: config.Config{
+		Config: dbkit.Config{
 			Host:     "localhost",
 			Port:     5432,
 			Username: "test",

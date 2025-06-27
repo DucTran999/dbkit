@@ -30,7 +30,7 @@ func TestPostgreSQLDialect(t *testing.T) {
 			expectedErr: "connection refused",
 		},
 		{
-			name: "valid config default disable ssl",
+			name: "valid config",
 			config: config.PostgreSQLConfig{
 				Config: config.Config{
 					Host:     "localhost",
@@ -40,6 +40,7 @@ func TestPostgreSQLDialect(t *testing.T) {
 					Database: "dbkit_test",
 					TimeZone: "Asia/Ho_Chi_Minh",
 				},
+				SSLMode: "disable",
 			},
 		},
 	}
