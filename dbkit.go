@@ -20,6 +20,7 @@ type Connection interface {
 
 type Config = config.Config
 type PostgreSQLConfig = config.PostgreSQLConfig
+type MySQLConfig = config.MySQLConfig
 
 var (
 	ErrPostgresqlSSLMode = config.ErrPostgresqlSSLMode
@@ -31,4 +32,8 @@ var (
 
 func NewPostgreSQLConnection(cfg PostgreSQLConfig) (Connection, error) {
 	return connections.NewPostgreSQLConnection(cfg)
+}
+
+func NewMySQLConnection(cfg MySQLConfig) (Connection, error) {
+	return connections.NewMySQLConnection(cfg)
 }

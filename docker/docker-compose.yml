@@ -10,7 +10,7 @@ services:
     volumes:
       - ../.docker/pg-data:/data/postgres
     ports:
-      - "5432:5432"
+      - "127.0.0.1:5432:5432"
     networks:
       - localnet
     healthcheck:
@@ -31,11 +31,17 @@ services:
       MYSQL_USER: test
       MYSQL_PASSWORD: test
     ports:
-      - "3306:3306"
+      - "127.0.0.1:3306:3306"
     volumes:
       - ../.docker/mysql_data:/var/lib/mysql
     networks:
       - localnet
+    healthcheck:
+      test: ["CMD-SHELL", "MYSQL_PWD=test mysqladmin ping -h 127.0.0.1 -u test"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
 
 networks:
   localnet:
