@@ -70,6 +70,45 @@ func main() {
 }
 ```
 
+### MySQL
+
+```go
+package main
+
+import (
+	"context"
+	"log"
+
+	"github.com/DucTran999/dbkit"
+)
+
+func main() {
+	config := dbkit.MySQLConfig{
+		Config: dbkit.Config{
+			Host:     "localhost",
+			Port:     3306,
+			Username: "test",
+			Password: "test",
+			Database: "dbkit_test",
+			TimeZone: "UTC",
+		},
+	}
+
+	conn, err := dbkit.NewMySQLConnection(config)
+	if err != nil {
+		log.Fatalf("failed to connect: %v", err)
+	}
+	defer conn.Close()
+
+	// Test the connection
+	if err := conn.Ping(context.Background()); err != nil {
+		log.Fatalf("Failed to ping database: %v", err)
+	}
+
+	log.Println("Successfully connected to MySQL!")
+}
+```
+
 ## Contributing
 
 Contributions are welcome! Please open an issue or submit a pull request.

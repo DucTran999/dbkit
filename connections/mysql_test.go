@@ -1,19 +1,19 @@
-package dbkit_test
+package connections_test
 
 import (
 	"context"
 	"testing"
 
-	"github.com/DucTran999/dbkit"
 	"github.com/DucTran999/dbkit/config"
+	"github.com/DucTran999/dbkit/connections"
 	"github.com/stretchr/testify/require"
 )
 
-func TestPostgreSQLConnection(t *testing.T) {
-	config := dbkit.PostgreSQLConfig{
-		Config: dbkit.Config{
+func TestMySQLConnection(t *testing.T) {
+	pgConf := config.MySQLConfig{
+		Config: config.Config{
 			Host:     "localhost",
-			Port:     5432,
+			Port:     3306,
 			Username: "test",
 			Password: "test",
 			Database: "dbkit_test",
@@ -21,7 +21,7 @@ func TestPostgreSQLConnection(t *testing.T) {
 		},
 	}
 
-	conn, err := dbkit.NewPostgreSQLConnection(config)
+	conn, err := connections.NewMySQLConnection(pgConf)
 	require.NoError(t, err)
 
 	// Test Ping to DB
@@ -39,11 +39,10 @@ func TestPostgreSQLConnection(t *testing.T) {
 	require.ErrorContains(t, err, "database is closed")
 }
 
-func TestMySQLConnection(t *testing.T) {
-	config := config.MySQLConfig{
+func TestMySQLConnectionFailed(t *testing.T) {
+	pgConf := config.MySQLConfig{
 		Config: config.Config{
-			Host:     "localhost",
-			Port:     3306,
+			Port:     6432,
 			Username: "test",
 			Password: "test",
 			Database: "dbkit_test",
@@ -51,20 +50,13 @@ func TestMySQLConnection(t *testing.T) {
 		},
 	}
 
-	conn, err := dbkit.NewMySQLConnection(config)
-	require.NoError(t, err)
+	// test config missing host
+	conn, err := connections.NewMySQLConnection(pgConf)
+	require.ErrorIs(t, err, config.ErrMissingHost)
 
-	// Test Ping to DB
-	err = conn.Ping(context.Background())
-	require.NoError(t, err)
-
-	// verify db instance
-	db := conn.DB()
-	require.NotNil(t, db)
-
-	conn.Close()
-
-	// Test Ping to DB
-	err = conn.Ping(context.Background())
-	require.ErrorContains(t, err, "database is closed")
+	// Test connection failed cause wrong port
+	pgConf.Host = "localhost"
+	conn, err = connections.NewMySQLConnection(pgConf)
+	require.ErrorContains(t, err, "connection refused")
+	require.Nil(t, conn)
 }
