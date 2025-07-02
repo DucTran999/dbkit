@@ -47,9 +47,9 @@ func main() {
 		Config: dbkit.Config{
 			Host:     "localhost",
 			Port:     5432,
-			Username: "test",
-			Password: "test",
-			Database: "dbkit_test",
+			Username: "your_username",
+			Password: "your_password",
+			Database: "your_database",
 			TimeZone: "UTC",
 		},
 		SSLMode: "disable",
@@ -87,9 +87,9 @@ func main() {
 		Config: dbkit.Config{
 			Host:     "localhost",
 			Port:     3306,
-			Username: "test",
-			Password: "test",
-			Database: "dbkit_test",
+			Username: "your_username",
+			Password: "your_password",
+			Database: "your_database",
 			TimeZone: "UTC",
 		},
 	}
@@ -106,6 +106,45 @@ func main() {
 	}
 
 	log.Println("Successfully connected to MySQL!")
+}
+```
+
+### ClickHouse
+
+```go
+package main
+
+import (
+	"context"
+	"log"
+
+	"github.com/DucTran999/dbkit"
+)
+
+func main() {
+	config := dbkit.ClickHouseConfig{
+		Config: dbkit.Config{
+			Host:     "localhost",
+			Port:     9000,
+			Username: "your_username",
+			Password: "your_password",
+			Database: "your_database",
+			TimeZone: "UTC",
+		},
+	}
+
+	conn, err := dbkit.NewClickHouseConnection(config)
+	if err != nil {
+		log.Fatalf("failed to connect: %v", err)
+	}
+	defer conn.Close()
+
+	// Test the connection
+	if err := conn.Ping(context.Background()); err != nil {
+		log.Fatalf("Failed to ping database: %v", err)
+	}
+
+	log.Println("Successfully connected to ClickHouse!")
 }
 ```
 
