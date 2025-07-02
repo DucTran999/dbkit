@@ -23,7 +23,7 @@ func NewClickHouseDialect(conf config.ClickHouseConfig) Dialect {
 	}
 }
 
-// Open opens a MySQL database connection.
+// Open opens a ClickHouse database connection.
 func (d *clickHouseDialect) Open() (*gorm.DB, error) {
 
 	sqlDB := std_ck.OpenDB(&std_ck.Options{

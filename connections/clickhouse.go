@@ -15,7 +15,7 @@ func NewClickHouseConnection(cfg config.ClickHouseConfig) (*connection, error) {
 
 	db, err := dialects.NewClickHouseDialect(cfg).Open()
 	if err != nil {
-		return nil, fmt.Errorf("failed to open MySQL connection: %w", err)
+		return nil, fmt.Errorf("failed to open ClickHouse connection: %w", err)
 	}
 
 	// Return the fully initialized connection.
