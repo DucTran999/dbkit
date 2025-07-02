@@ -45,6 +45,15 @@ jobs:
         run: task tidy
       - name: Setup database for test
         run: task testenv
+      - name: Wait for DB to be ready
+        run: |
+          echo "Waiting for containers to be healthy..."
+          for SERVICE in pg mysql clickhouse; do
+            echo "Waiting for $SERVICE..."
+            until [ "$(docker inspect -f '{{.State.Health.Status}}' dbkit_$SERVICE)" == "healthy" ]; do
+              sleep 2
+            done
+          done
       - name: Run Coverage Tests
         run: task coverage
       - name: Upload to Codecov
