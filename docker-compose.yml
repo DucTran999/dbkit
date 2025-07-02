@@ -43,6 +43,32 @@ services:
       retries: 5
       start_period: 10s
 
+  clickhouse:
+    image: clickhouse/clickhouse-server:25.4
+    container_name: dbkit_clickhouse
+    environment:
+      CLICKHOUSE_DB: dbkit_test
+      CLICKHOUSE_USER: test
+      CLICKHOUSE_PASSWORD: test
+      CLICKHOUSE_DEFAULT_ACCESS_MANAGEMENT: 1
+    ports:
+      - "127.0.0.1:9000:9000" # TCP native
+      - "127.0.0.1:8120:8123" # HTTP interface
+      - "127.0.0.1:9009:9009" # Inter-server communication
+    networks:
+      - localnet
+    restart: unless-stopped
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "wget --spider --quiet --user=test --password=test http://localhost:8123/ping",
+        ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
 networks:
   localnet:
     driver: bridge
