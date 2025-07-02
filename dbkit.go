@@ -21,6 +21,7 @@ type Connection interface {
 type Config = config.Config
 type PostgreSQLConfig = config.PostgreSQLConfig
 type MySQLConfig = config.MySQLConfig
+type ClickHouseConfig = config.ClickHouseConfig
 
 var (
 	ErrPostgresqlSSLMode = config.ErrPostgresqlSSLMode
@@ -36,4 +37,8 @@ func NewPostgreSQLConnection(cfg PostgreSQLConfig) (Connection, error) {
 
 func NewMySQLConnection(cfg MySQLConfig) (Connection, error) {
 	return connections.NewMySQLConnection(cfg)
+}
+
+func NewClickHouseConnection(cfg ClickHouseConfig) (Connection, error) {
+	return connections.NewClickHouseConnection(cfg)
 }

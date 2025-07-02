@@ -9,11 +9,11 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestMySQLConnection(t *testing.T) {
-	conf := config.MySQLConfig{
+func TestClickHouseConnection(t *testing.T) {
+	chConf := config.ClickHouseConfig{
 		Config: config.Config{
 			Host:     "localhost",
-			Port:     3306,
+			Port:     9000,
 			Username: "test",
 			Password: "test",
 			Database: "dbkit_test",
@@ -21,7 +21,7 @@ func TestMySQLConnection(t *testing.T) {
 		},
 	}
 
-	conn, err := connections.NewMySQLConnection(conf)
+	conn, err := connections.NewClickHouseConnection(chConf)
 	require.NoError(t, err)
 
 	// Test Ping to DB
@@ -39,8 +39,8 @@ func TestMySQLConnection(t *testing.T) {
 	require.ErrorContains(t, err, "database is closed")
 }
 
-func TestMySQLConnectionFailed(t *testing.T) {
-	conf := config.MySQLConfig{
+func TestClickHouseConnectionFailed(t *testing.T) {
+	chConf := config.ClickHouseConfig{
 		Config: config.Config{
 			Port:     6432,
 			Username: "test",
@@ -51,12 +51,12 @@ func TestMySQLConnectionFailed(t *testing.T) {
 	}
 
 	// test config missing host
-	conn, err := connections.NewMySQLConnection(conf)
+	conn, err := connections.NewClickHouseConnection(chConf)
 	require.ErrorIs(t, err, config.ErrMissingHost)
 
 	// Test connection failed cause wrong port
-	conf.Host = "localhost"
-	conn, err = connections.NewMySQLConnection(conf)
+	chConf.Host = "localhost"
+	conn, err = connections.NewClickHouseConnection(chConf)
 	require.ErrorContains(t, err, "connection refused")
 	require.Nil(t, conn)
 }
